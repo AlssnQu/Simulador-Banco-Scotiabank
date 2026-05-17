@@ -1,143 +1,146 @@
 <script setup>
-import GuestLayout from '@/Layouts/GuestLayout.vue';
-import InputError from '@/Components/InputError.vue';
-import InputLabel from '@/Components/InputLabel.vue';
-import PrimaryButton from '@/Components/PrimaryButton.vue';
-import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
+import { ref, computed } from 'vue';
+
+const currentStep = ref(1);
+const generatedToken = ref('123456'); // Token simulado
+const userTokenInput = ref('');
+const showCardError = ref(false);
 
 const form = useForm({
-    name: '',
-    email: '',
-    document_type: 'DNI',      // tipo doc
-    document_number: '',    // nro doc
+    document_type: 'DNI',
+    document_number: '',
+    card_number: '',
+    pin: '',
     password: '',
     password_confirmation: '',
 });
 
-const submit = () => {
-    form.post(route('register'), {
+const documentTypes = ['DNI', 'RUC', 'Carné de Extranjería', 'Pasaporte'];
+
+// Lógica para avanzar pasos
+const nextStep = async () => {
+    if (currentStep.value === 1) {
+        try {
+            // Quitamos espacios del número de tarjeta antes de enviar
+            const cleanCardNumber = form.card_number.replace(/\s+/g, '');
+            
+            const response = await axios.post('/validate-card', {
+                document_number: form.document_number,
+                card_number: cleanCardNumber,
+                pin: form.pin
+            });
+
+            if (response.data.valid) {
+                currentStep.value = 2; // Avanza al token
+                showCardError.value = false;
+            }
+        } catch (error) {
+            // Si Laravel devuelve 401 o hay error, mostramos el mensaje
+            showCardError.value = true;
+        }
+    } else if (currentStep.value === 2) {
+        // Validación del token (esta sí puede ser simulada o fija)
+        if (userTokenInput.value === '123456') {
+            currentStep.value = 3;
+        } else {
+            alert("Token incorrecto");
+        }
+    }
+};
+
+const submitFinal = () => {
+    // Usamos transform para enviar solo lo necesario en el paso final
+    form.transform((data) => ({
+        ...data,
+        document_number: form.document_number, // Enviamos el DNI para saber a quién actualizar
+    })).put(route('user.activate'), {
         onFinish: () => form.reset('password', 'password_confirmation'),
+        onSuccess: () => {
+            alert("¡Clave Digital creada con éxito! Ahora puedes iniciar sesión.");
+        }
     });
 };
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Register" />
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
-
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-
-                <InputError class="mt-2" :message="form.errors.name" />
+    <Head title="Activación de Clave Digital" />
+    <div class="min-h-screen bg-[#F4F4F4] font-sans">
+        
+        <header class="bg-white border-b p-4">
+            <div class="max-w-5xl mx-auto flex justify-between items-center">
+                <h1 class="text-[#D11218] text-2xl font-black">Scotiabank<span class="text-gray-300">.</span></h1>
+                <span class="text-sm font-bold text-gray-500">Paso {{ currentStep }} de 3</span>
             </div>
+        </header>
 
-            <div class="mt-4">
-                <InputLabel for="document_type" value="Tipo de Documento" />
-                <select
-                    id="document_type"
-                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-red-500 focus:ring-red-500"
-                    v-model="form.document_type"
-                    required
-                >
-                    <option value="DNI">DNI</option>
-                    <option value="RUC">RUC</option>
-                    <option value="CE">Carné de Extranjería</option>
-                </select>
-                <InputError class="mt-2" :message="form.errors.document_type" />
+        <main class="max-w-xl mx-auto mt-12 p-6">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                
+                <div v-if="currentStep === 1">
+                    <h2 class="text-2xl font-bold mb-6">Empecemos por identificarte</h2>
+                    <div class="space-y-4">
+                        <label class="block text-sm font-bold">Tipo de documento</label>
+                        <select v-model="form.document_type" class="w-full border-gray-300 rounded-md">
+                            <option v-for="t in documentTypes" :value="t">{{ t }}</option>
+                        </select>
+
+                        <label class="block text-sm font-bold">Número de documento</label>
+                        <input v-model="form.document_number" type="text" class="w-full border-gray-300 rounded-md" placeholder="12345678">
+
+                        <label class="block text-sm font-bold">Número de tarjeta</label>
+                        <input v-model="form.card_number" type="text" class="w-full border-gray-300 rounded-md" placeholder="XXXX XXXX XXXX XXXX">
+
+                        <label class="block text-sm font-bold">PIN de cajero (4 dígitos)</label>
+                        <input v-model="form.pin" type="password" maxlength="4" class="w-full border-gray-300 rounded-md text-center tracking-widest">
+                    </div>
+                    
+                    <div v-if="showCardError" class="mt-4 text-red-600 text-sm bg-red-50 p-2 rounded">
+                        Datos no encontrados. (Prueba DNI: 12345678, PIN: 1234)
+                    </div>
+                </div>
+
+                <div v-if="currentStep === 2" class="text-center">
+                    <div class="mb-6 text-5xl">📱</div>
+                    <h2 class="text-2xl font-bold mb-2">Valida tu identidad</h2>
+                    <p class="text-gray-600 mb-6">Ingresa el código de 6 dígitos que enviamos a tu celular.</p>
+                    
+                    <input v-model="userTokenInput" type="text" maxlength="6" 
+                        class="text-3xl text-center w-full tracking-[0.5em] border-b-2 border-red-500 border-t-0 border-l-0 border-r-0 focus:ring-0" 
+                        placeholder="000000">
+                    
+                    <p class="mt-6 text-sm text-gray-500 italic">Tip: El código de prueba es 123456</p>
+                </div>
+
+                <div v-if="currentStep === 3">
+                    <h2 class="text-2xl font-bold mb-2">Crea tu Clave Digital</h2>
+                    <p class="text-gray-600 mb-6">Esta clave te servirá para entrar a tu banca por internet.</p>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-bold">Nueva Clave (6 dígitos)</label>
+                            <input v-model="form.password" type="password" class="w-full border-gray-300 rounded-md">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-bold">Confirma tu Clave</label>
+                            <input v-model="form.password_confirmation" type="password" class="w-full border-gray-300 rounded-md">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 flex justify-between border-t pt-6">
+                    <button @click="currentStep--" v-if="currentStep > 1" class="text-gray-600 font-bold">Atrás</button>
+                    <div v-else></div>
+
+                    <button v-if="currentStep < 3" @click="nextStep" class="bg-[#D11218] text-white px-8 py-3 rounded font-bold">
+                        Continuar
+                    </button>
+                    <button v-else @click="submitFinal" class="bg-[#D11218] text-white px-8 py-3 rounded font-bold">
+                        Finalizar Activación
+                    </button>
+                </div>
+
             </div>
-
-            <div class="mt-4">
-                <InputLabel for="document_number" value="Número de Documento" />
-                <TextInput
-                    id="document_number"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.document_number"
-                    required
-                    placeholder="Ingresa tu documento"
-                />
-                <InputError class="mt-2" :message="form.errors.document_number" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
-            </div>
-
-            <div class="mt-4 flex items-center justify-end">
-                <Link
-                    :href="route('login')"
-                    class="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4 bg-[#D11218] hover:bg-red-700" 
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Registrar Usuario
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+        </main>
+    </div>
 </template>
