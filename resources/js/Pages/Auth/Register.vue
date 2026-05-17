@@ -9,6 +9,8 @@ import { Head, Link, useForm } from '@inertiajs/vue3';
 const form = useForm({
     name: '',
     email: '',
+    document_type: 'DNI',      // tipo doc
+    document_number: '',    // nro doc
     password: '',
     password_confirmation: '',
 });
@@ -39,6 +41,34 @@ const submit = () => {
                 />
 
                 <InputError class="mt-2" :message="form.errors.name" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="document_type" value="Tipo de Documento" />
+                <select
+                    id="document_type"
+                    class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-red-500 focus:ring-red-500"
+                    v-model="form.document_type"
+                    required
+                >
+                    <option value="DNI">DNI</option>
+                    <option value="RUC">RUC</option>
+                    <option value="CE">Carné de Extranjería</option>
+                </select>
+                <InputError class="mt-2" :message="form.errors.document_type" />
+            </div>
+
+            <div class="mt-4">
+                <InputLabel for="document_number" value="Número de Documento" />
+                <TextInput
+                    id="document_number"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.document_number"
+                    required
+                    placeholder="Ingresa tu documento"
+                />
+                <InputError class="mt-2" :message="form.errors.document_number" />
             </div>
 
             <div class="mt-4">
@@ -101,11 +131,11 @@ const submit = () => {
                 </Link>
 
                 <PrimaryButton
-                    class="ms-4"
+                    class="ms-4 bg-[#D11218] hover:bg-red-700" 
                     :class="{ 'opacity-25': form.processing }"
                     :disabled="form.processing"
                 >
-                    Register
+                    Registrar Usuario
                 </PrimaryButton>
             </div>
         </form>
