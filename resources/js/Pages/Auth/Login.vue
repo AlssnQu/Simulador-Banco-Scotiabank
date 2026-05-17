@@ -30,7 +30,7 @@ const documentTypes = [
     <Head title="Banca por Internet - Scotiabank" />
 
     <div class="min-h-screen flex bg-white font-sans">
-        <div class="w-full lg:w-[40%] p-8 md:p-16 flex flex-col justify-center">
+        <div class="w-full lg:w-[30%] p-8 md:p-16 flex flex-col justify-center">
             <div class="max-w-md mx-auto w-full">
                 
                 <div class="mb-10">
@@ -119,14 +119,14 @@ const documentTypes = [
                         <p v-if="form.errors.password" class="text-red-600 text-xs mt-1">{{ form.errors.password }}</p>
                     </div>
 
-                    <div class="flex items-center justify-between mt-8">
+                    <div class="flex items-center justify-between mt-9">
                         <label class="flex items-center cursor-pointer">
-                            <input type="checkbox" v-model="form.remember" 
-                                class="rounded border-gray-300 text-[#D11218] focus:ring-[#D11218]" />
+                            <input type="checkbox" v-model="form.remember"
+                                class="rounded border-gray-400 text-[#D11218] focus:ring-[#D11218]" />
                             <span class="ml-2 text-sm text-gray-600 font-medium">Confiar</span>
                         </label>
-                        <Link :href="route('password.request')" class="text-sm text-[#D11218] font-bold hover:underline">
-                            ¿Olvidaste tu contraseña?
+                        <Link :href="route('password.request')" class="text-sm text-[#1990ff] font-bold hover:underline">
+                            Recuperar contraseña
                         </Link>
                     </div>
 
@@ -147,7 +147,7 @@ const documentTypes = [
 
                         <Link 
                             :href="route('register')" 
-                            class="text-[#005670] font-bold ml-1 underline decoration-dotted underline-offset-4 hover:opacity-80"
+                            class="text-[#1990ff] font-bold ml-1 underline decoration-dotted underline-offset-4 hover:opacity-80"
                         >
                             Registrarse
                         </Link>
@@ -156,7 +156,7 @@ const documentTypes = [
             </div>
         </div>
 
-        <div class="hidden lg:flex lg:w-[60%] relative overflow-hidden bg-[#F9F9F9] border-l border-gray-100 p-16">
+        <div class="hidden lg:flex lg:w-[70%] relative overflow-hidden bg-[#F9F9F9] border-l border-gray-100 p-16">
             <img 
                 src="/images/cuenta-digital.svg"
                 alt="Cuenta Digital"
