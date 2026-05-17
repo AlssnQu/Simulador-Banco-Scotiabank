@@ -4,6 +4,8 @@ import { ref } from 'vue';
 
 const showPassword = ref(false);
 
+const showDocument = ref(false);
+
 const form = useForm({
     document_type: 'DNI',
     document_number: '',
@@ -32,8 +34,15 @@ const documentTypes = [
             <div class="max-w-md mx-auto w-full">
                 
                 <div class="mb-10">
-                    <h1 class="text-[#D11218] text-4xl font-black tracking-tighter">Scotiabank<span class="text-gray-300">.</span></h1>
-                    <h2 class="text-2xl font-bold mt-8 text-gray-800">Inicia sesión</h2>
+                    <img 
+                        src="/icons/scotiabank-no-bg.svg"
+                        alt="Scotiabank"
+                        class="h-12 w-auto"
+                    />
+
+                    <h2 class="text-3xl font-bold mt-9 text-gray-800">
+                        Inicia sesión
+                    </h2>
                 </div>
 
                 <form @submit.prevent="submit">
@@ -46,22 +55,65 @@ const documentTypes = [
                     </div>
 
                     <div class="mt-6 relative">
-                        <label class="block text-sm font-bold text-gray-700">Número de documento</label>
-                        <input type="text" v-model="form.document_number" required
-                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#D11218] focus:ring-[#D11218]" 
-                            placeholder="Ingresa tu documento" />
-                        <p v-if="form.errors.document_number" class="text-red-600 text-xs mt-1">{{ form.errors.document_number }}</p>
+                        <label class="block text-sm font-bold text-gray-700">
+                            Número de documento
+                        </label>
+
+                        <div class="relative">
+                            <input 
+                                :type="showDocument ? 'text' : 'password'"
+                                v-model="form.document_number" 
+                                required
+                                class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#D11218] focus:ring-[#D11218]" 
+                                placeholder="Ingresa tu documento" 
+                            />
+
+                            <button 
+                                type="button" 
+                                @click="showDocument = !showDocument"
+                                class="absolute right-3 top-1/2 -translate-y-1/2 mt-0.5"
+                            >
+                                <img 
+                                    :src="showDocument 
+                                        ? '/icons/ojo-abierto.svg' 
+                                        : '/icons/ojo-cerrado.svg'"
+                                    alt="Mostrar documento"
+                                    class="w-5 h-5 opacity-70 hover:opacity-100 transition"
+                                />
+                            </button>
+                        </div>
+
+                        <p 
+                            v-if="form.errors.document_number" 
+                            class="text-red-600 text-xs mt-1"
+                        >
+                            {{ form.errors.document_number }}
+                        </p>
                     </div>
 
                     <div class="mt-6">
                         <label class="block text-sm font-bold text-gray-700">Contraseña</label>
                         <div class="relative">
-                            <input :type="showPassword ? 'text' : 'password'" v-model="form.password" required
+                            <input 
+                                :type="showPassword ? 'text' : 'password'" 
+                                v-model="form.password" 
+                                required
                                 class="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:border-[#D11218] focus:ring-[#D11218]" 
-                                placeholder="Ingresa tu contraseña" />
-                            <button type="button" @click="showPassword = !showPassword" 
-                                class="absolute right-3 top-2 text-[10px] text-[#D11218] font-bold uppercase hover:underline">
-                                {{ showPassword ? 'Ocultar' : 'Mostrar' }}
+                                placeholder="Ingresa tu contraseña" 
+                            />
+
+                            <button 
+                                type="button" 
+                                @click="showPassword = !showPassword"
+                                class="absolute right-3 top-1/2 -translate-y-1/2"
+                            >
+                                <img 
+                                    :src="showPassword 
+                                        ? '/icons/ojo-abierto.svg' 
+                                        : '/icons/ojo-cerrado.svg'"
+                                    alt="Mostrar contraseña"
+                                    class="w-5 h-5 opacity-70 hover:opacity-100 transition"
+                                />
                             </button>
                         </div>
                         <p v-if="form.errors.password" class="text-red-600 text-xs mt-1">{{ form.errors.password }}</p>
@@ -86,8 +138,19 @@ const documentTypes = [
                 </form>
 
                 <div class="mt-12 pt-8 border-t border-gray-100 text-center">
-                    <p class="text-gray-500 text-sm">¿Es tu primera vez aquí? 
-                        <Link :href="route('register')" class="text-[#D11218] font-bold hover:underline ml-1">Registrarse</Link>
+                    <p class="text-gray-700 text-sm">
+                        <span class="font-bold text-gray-700">
+                            ¿Es tu primera vez aquí?
+                        </span>
+
+                        Empieza ahora a realizar tus operaciones.
+
+                        <Link 
+                            :href="route('register')" 
+                            class="text-[#005670] font-bold ml-1 underline decoration-dotted underline-offset-4 hover:opacity-80"
+                        >
+                            Registrarse
+                        </Link>
                     </p>
                 </div>
             </div>
