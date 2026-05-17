@@ -93,14 +93,72 @@ const documentTypes = [
             </div>
         </div>
 
-        <div class="hidden lg:flex lg:w-[60%] bg-[#F9F9F9] border-l border-gray-100 items-center justify-center p-20">
-            <div class="text-center max-w-sm">
-                <div class="w-20 h-20 bg-gray-200 rounded-full mx-auto mb-6 flex items-center justify-center text-3xl">🚀</div>
-                <h3 class="text-2xl font-bold text-gray-400 italic">Abre tu Cuenta Digital</h3>
-                <p class="text-gray-400 mt-4 leading-relaxed">
-                    Disfruta de los beneficios de ser parte del banco más digital del Perú. 
-                    Próximamente verás aquí nuestras promociones.
-                </p>
+        <div class="hidden lg:flex lg:w-[60%] relative overflow-hidden bg-[#F9F9F9] border-l border-gray-100 p-16">
+            <img 
+                src="/images/cuenta-digital.svg"
+                alt="Cuenta Digital"
+                class="absolute bottom-0 right-0 w-[500px] opacity-95 pointer-events-none select-none"
+            />
+
+            <div class="relative z-10 max-w-xl">
+
+                <h3 class="text-4xl font-bold text-[#000] leading-tight">
+                    Abre ahora tu nueva <br />
+                    Cuenta Digital
+                </h3>
+
+                <div class="mt-8 space-y-6">
+                    <div class="flex items-start gap-4">
+                        <img 
+                            src="/icons/moneda.svg" 
+                            alt="Monedas"
+                            class="w-8 h-8"
+                        />
+                        <p class="text-gray-600 leading-relaxed">
+                            Sin costo de mantenimiento.
+                        </p>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <img 
+                            src="/icons/smartphone.svg" 
+                            alt="Transferencias"
+                            class="w-8 h-8"
+                        />
+                        <p class="text-gray-600 leading-relaxed">
+                            Transferencias interbancarias digitales gratis.
+                        </p>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <img 
+                            src="/icons/deposito.svg" 
+                            alt="Depósitos"
+                            class="w-8 h-8"
+                        />
+                        <p class="text-gray-600 leading-relaxed">
+                            Depósitos GRATIS e ilimitados en nuestras ventanillas y cajeros a nivel nacional.
+                        </p>
+                    </div>
+
+                    <div class="flex items-start gap-4">
+                        <img 
+                            src="/icons/plin-yape.svg" 
+                            alt="Plin y Yape"
+                            class="w-8 h-8"
+                        />
+                        <p class="text-gray-600 leading-relaxed">
+                            Cobra y paga de forma inmediata con usuarios PLIN o YAPE.
+                        </p>
+                    </div>
+
+                </div>
+
+                <button
+                    class="mt-10 bg-white hover:bg-[#495057] text-black hover:text-white border border-gray-400 font-semibold px-8 py-3 rounded-3xl transition duration-300 shadow-md"
+                >
+                    Abrir cuenta
+                </button>
             </div>
         </div>
     </div>
