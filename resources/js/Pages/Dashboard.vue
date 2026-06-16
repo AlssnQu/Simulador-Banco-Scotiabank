@@ -65,7 +65,7 @@ const quieroOpciones = [
                     <div>
                         <p class="text-sm font-bold text-gray-700">Cuenta Free</p>
                         <p class="text-lg font-black mt-1">
-                            {{ showBalance ? `S/ ${props.account?.balance || '0.00'}` : 'S/ ...' }}
+                            {{ showBalance ? `S/ ${props.account?.montosaldodisponible_ac || '0.00'}` : 'S/ ...' }}
                         </p>
                     </div>
                     <ChevronRightIcon class="h-5 w-5 text-gray-400 group-hover:text-[#D11218]" />
