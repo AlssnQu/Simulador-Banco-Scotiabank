@@ -2,31 +2,36 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'email', 'password', 'document_type', 'document_number'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
-    /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
+    // para que laravel use la tabla default
+    protected $table = 'usuarios_homebanking';
+    protected $primaryKey = 'pkusuario';
+
+    protected $fillable = [
+        'pkcliente',
+        'username', // DNI o el usuario
+        'password_hash', // en vez de 'password'
+        'ultimo_acceso',
+        'intentos_fallidos',
+        'bloqueado',
+        'activo',
+    ];
+
+    protected $hidden = [
+        'password_hash',
+        'token_refresh',
+    ];
+
+    // Mapeamos el campo de contraseña para que Auth de Laravel no se confunda
+    public function getAuthPassword()
     {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
+        return $this->password_hash;
     }
 }
