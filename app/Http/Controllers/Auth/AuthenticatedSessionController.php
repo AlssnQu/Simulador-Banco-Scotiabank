@@ -27,13 +27,23 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
+    public function store(Request $request)
     {
-        $request->authenticate();
+        $request->validate([
+            'document_number' => 'required|string',
+            'password' => 'required|string',
+        ]);
+
+        // Buscamos las credenciales directamente en la tabla por defecto de Laravel
+        if (! Auth::attempt($request->only('document_number', 'password'), $request->boolean('remember'))) {
+            return back()->withErrors([
+                'document_number' => 'El DNI o el PIN son incorrectos.',
+            ]);
+        }
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        return redirect()->intended(route('dashboard'));
     }
 
     /**

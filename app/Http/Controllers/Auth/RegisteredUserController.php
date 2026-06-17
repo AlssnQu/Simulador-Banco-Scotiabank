@@ -29,22 +29,25 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
+    public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
-            'document_type' => 'required|string',
-            'document_number' => 'required|string|unique:'.User::class,
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'name' => 'required|string|max|255',
+            'document_number' => 'required|string|max:12|unique:users',
+            'email' => 'required|string|lowercase|email|max:255|unique:users',
+            'password' => 'required|string|confirmed|min:4',
         ]);
+
+        // Simulamos la asignación del PKCLIENTE
+        // primer usuario de prueba, ID 1
+        $pkClienteAsignado = 1; 
 
         $user = User::create([
             'name' => $request->name,
-            'email' => $request->email,
-            'document_type' => $request->document_type,
             'document_number' => $request->document_number,
+            'email' => $request->email,
             'password' => Hash::make($request->password),
+            'pkcliente' => $pkClienteAsignado, // puente
         ]);
 
         event(new Registered($user));

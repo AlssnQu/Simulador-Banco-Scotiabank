@@ -10,6 +10,7 @@ const showCardError = ref(false);
 const form = useForm({
     document_type: 'DNI',
     document_number: '',
+    email: '',
     card_number: '',
     pin: '',
     password: '',
@@ -87,6 +88,9 @@ const submitFinal = () => {
 
                         <label class="block text-sm font-bold">Número de documento</label>
                         <input v-model="form.document_number" type="text" class="w-full border-gray-300 rounded-md" placeholder="12345678">
+
+                        <label class="block text-sm font-bold">Correo electrónico</label>
+                        <input v-model="form.email" type="email" class="w-full border-gray-300 rounded-md" placeholder="tu correo">
 
                         <label class="block text-sm font-bold">Número de tarjeta</label>
                         <input v-model="form.card_number" type="text" class="w-full border-gray-300 rounded-md" placeholder="XXXX XXXX XXXX XXXX">

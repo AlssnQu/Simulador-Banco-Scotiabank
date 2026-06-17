@@ -10,28 +10,17 @@ class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    // para que laravel use la tabla default
-    protected $table = 'usuarios_homebanking';
-    protected $primaryKey = 'pkusuario';
-
     protected $fillable = [
-        'pkcliente',
-        'username', // DNI o el usuario
-        'password_hash', // en vez de 'password'
-        'ultimo_acceso',
-        'intentos_fallidos',
-        'bloqueado',
-        'activo',
+        'name',
+        'email',
+        'password',
+        'card_number',
+        'pkcliente',       // Agregado
+        'document_number', // Agregado
     ];
 
     protected $hidden = [
-        'password_hash',
-        'token_refresh',
+        'password',
+        'remember_token',
     ];
-
-    // Mapeamos el campo de contraseña para que Auth de Laravel no se confunda
-    public function getAuthPassword()
-    {
-        return $this->password_hash;
-    }
 }
